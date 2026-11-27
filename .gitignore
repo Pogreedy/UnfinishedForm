@@ -1,0 +1,17 @@
+# Build output
+bin/
+obj/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# Local build settings
+local.props
+
+# Logs
+*.log

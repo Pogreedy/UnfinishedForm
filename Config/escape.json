@@ -1,0 +1,10 @@
+{
+  "escape": {
+    "qliphothCounterThreshold": 0,
+    "escapeIntervalSeconds": 0.0,
+    "bossMaxHp": 0.0,
+    "phaseTwoHpRatio": 0.0,
+    "phaseThreeHpRatio": 0.0,
+    "enrageDelaySeconds": 0.0
+  }
+}

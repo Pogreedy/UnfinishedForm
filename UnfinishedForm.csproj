@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>UnfinishedForm</AssemblyName>
+    <RootNamespace>UnfinishedForm</RootNamespace>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>portable</DebugType>
+
+    <!-- 游戏根目录：优先用 -p:GameDir=...，否则读取环境变量 LOBOTOMY_CORP_DIR。 -->
+    <GameDir Condition="'$(GameDir)' == ''">$(LOBOTOMY_CORP_DIR)</GameDir>
+    <ManagedDir>$(GameDir)\LobotomyCorp_Data\Managed</ManagedDir>
+    <BepInExDir Condition="'$(BepInExDir)' == ''">$(GameDir)\BepInEx\core</BepInExDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- BepInEx 5.4.x x64：运行时由 BepInEx 提供，不复制到输出。 -->
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExDir)\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExDir)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- 游戏与 Unity 程序集，供后续逻辑接入。 -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="LobotomyBaseModLib">
+      <HintPath>$(ManagedDir)\LobotomyBaseModLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(ManagedDir)\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="ValidateSetup" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(GameDir)' == ''"
+           Text="未设置 GameDir。请安装 Lobotomy Corporation，然后使用 -p:GameDir=... 或环境变量 LOBOTOMY_CORP_DIR 指定游戏根目录。" />
+    <Error Condition="'$(GameDir)' != '' and !Exists('$(ManagedDir)\Assembly-CSharp.dll')"
+           Text="在 $(ManagedDir) 下找不到 Assembly-CSharp.dll，请检查 GameDir 是否指向游戏根目录。" />
+    <Error Condition="'$(GameDir)' != '' and !Exists('$(BepInExDir)\BepInEx.dll')"
+           Text="在 $(BepInExDir) 下找不到 BepInEx.dll，请先安装 BepInEx 5.4.x（x64），或用 -p:BepInExDir=... 指定 BepInEx\core 目录。" />
+  </Target>
+
+  <Target Name="CopyToBepInExPlugins" AfterTargets="Build" Condition="Exists('$(GameDir)\BepInEx\plugins')">
+    <ItemGroup>
+      <PluginArtifact Include="$(TargetPath)" />
+      <PluginArtifact Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    </ItemGroup>
+    <MakeDir Directories="$(GameDir)\BepInEx\plugins\UnfinishedForm" />
+    <Copy SourceFiles="@(PluginArtifact)"
+          DestinationFolder="$(GameDir)\BepInEx\plugins\UnfinishedForm"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
