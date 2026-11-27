@@ -58,6 +58,9 @@ namespace UnfinishedForm.Containment
         /// <summary>计数器是否曾归零并触发过出逃入口。</summary>
         public bool EscapeTriggered { get; private set; }
 
+        /// <summary>计数器归零时触发，Escape 模块通过该事件进入出逃状态。</summary>
+        public event Action Escaped;
+
         /// <summary>
         /// 执行一次工作。普通工作必须传入 result；审判工作会忽略 result 并内部掷骰。
         /// 返回 null 表示本次工作不被接受（饱和、已归零、Id 不匹配或参数缺失）。
@@ -232,10 +235,10 @@ namespace UnfinishedForm.Containment
             }
         }
 
-        /// <summary>计数器归零时的出逃事件入口。Boss 战不在本模块实现。</summary>
+        /// <summary>计数器归零时的出逃事件入口，由 Escape 模块订阅接管。</summary>
         private void OnEscapeTriggered()
         {
-            // 出逃与 Boss 阶段由 Escape 模块接管；此处只保留入口。
+            Escaped?.Invoke();
         }
     }
 }

@@ -3,50 +3,74 @@ using System;
 namespace UnfinishedForm.Escape
 {
     /// <summary>
-    /// Boss 阶段状态机骨架。阶段阈值、血量驱动与技能切换均未实现。
+    /// Boss 阶段状态机。第一阶段在完成 3 次反照判定，
+    /// 或生命值降至 50% 及以下时进入第二阶段。
     /// </summary>
     public sealed class BossPhaseStateMachine
     {
+        /// <summary>进入第二阶段所需的完整反照判定次数。</summary>
+        public const int ReflectionsForPhaseTwo = 3;
+
+        /// <summary>进入第二阶段的生命值比例。</summary>
+        public const float PhaseTwoHpRatio = 0.5f;
+
         /// <summary>当前 Boss 阶段。</summary>
         public BossPhase CurrentPhase { get; private set; } = BossPhase.None;
 
         /// <summary>阶段变化通知：(旧阶段, 新阶段)。</summary>
         public event Action<BossPhase, BossPhase> PhaseChanged;
 
-        /// <summary>每帧推进阶段计时与条件检查。</summary>
+        /// <summary>阶段切换由反照计数与生命值事件驱动，无独立计时。</summary>
         public void Tick(float deltaTime)
         {
-            // TODO: 阶段计时、技能循环或外部条件检查。
         }
 
-        /// <summary>通知当前血量变化，用于按比例推进阶段。</summary>
+        /// <summary>生命值变化时检查 50% 阈值。</summary>
         public void NotifyHpChanged(float currentHp, float maxHp)
         {
-            // TODO: 根据 Config/escape.json 中的血量比例切换阶段。
+            if (CurrentPhase != BossPhase.PhaseOne || maxHp <= 0f)
+            {
+                return;
+            }
+
+            if (currentHp / maxHp <= PhaseTwoHpRatio)
+            {
+                EnterPhase(BossPhase.PhaseTwo);
+            }
         }
 
-        /// <summary>直接进入指定阶段（调试或脚本事件使用）。</summary>
+        /// <summary>反照判定完成后检查 3 次阈值。</summary>
+        public void NotifyReflectionCount(int reflectionCount)
+        {
+            if (CurrentPhase == BossPhase.PhaseOne && reflectionCount >= ReflectionsForPhaseTwo)
+            {
+                EnterPhase(BossPhase.PhaseTwo);
+            }
+        }
+
+        /// <summary>直接进入指定阶段（出逃初始化或调试使用）。</summary>
         public void EnterPhase(BossPhase phase)
         {
-            // TODO: 校验阶段顺序并触发 PhaseChanged。
-        }
-
-        /// <summary>复位到未进入 Boss 阶段。</summary>
-        public void Reset()
-        {
-            // TODO
-        }
-
-        private void TransitionTo(BossPhase nextPhase)
-        {
-            if (CurrentPhase == nextPhase)
+            if (CurrentPhase == phase)
             {
                 return;
             }
 
             BossPhase previousPhase = CurrentPhase;
-            CurrentPhase = nextPhase;
-            PhaseChanged?.Invoke(previousPhase, nextPhase);
+            CurrentPhase = phase;
+            PhaseChanged?.Invoke(previousPhase, phase);
+        }
+
+        /// <summary>从第一阶段开始。</summary>
+        public void StartPhaseOne()
+        {
+            EnterPhase(BossPhase.PhaseOne);
+        }
+
+        /// <summary>复位到未进入 Boss 阶段。</summary>
+        public void Reset()
+        {
+            EnterPhase(BossPhase.None);
         }
     }
 }
