@@ -12,6 +12,10 @@ namespace UnfinishedForm.Escape
 
         public bool HasEgoSet { get; set; }
 
+        public bool IsAlive { get; set; } = true;
+
+        public bool IsBelonging { get; set; }
+
         public int DesireStacks { get; set; }
 
         public int LightShadowStacks { get; set; }

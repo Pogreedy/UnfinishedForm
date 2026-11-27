@@ -48,6 +48,15 @@ namespace UnfinishedForm.Escape
             }
         }
 
+        /// <summary>茧的生命值归零后进入第三阶段。第三阶段技能暂未实现。</summary>
+        public void NotifyCocoonBroken()
+        {
+            if (CurrentPhase == BossPhase.PhaseTwo)
+            {
+                EnterPhase(BossPhase.PhaseThree);
+            }
+        }
+
         /// <summary>直接进入指定阶段（出逃初始化或调试使用）。</summary>
         public void EnterPhase(BossPhase phase)
         {

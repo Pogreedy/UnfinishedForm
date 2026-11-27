@@ -5,12 +5,13 @@ using UnfinishedForm.Containment;
 namespace UnfinishedForm.Escape
 {
     /// <summary>
-    /// 「未竟之形」出逃战的第一阶段：摹仿·反照。
-    /// 负责出逃触发、全局警报、反照判定、未竟回响与阶段切换。
+    /// 「未竟之形」出逃战。第一阶段为摹仿·反照，第二阶段为茧中梦；
+    /// 第三阶段只保留阶段接口，不实现技能。
     /// </summary>
     public sealed class BossEncounter
     {
         public const string PhaseOneName = "摹仿·反照";
+        public const string PhaseTwoName = "茧中梦";
 
         public const float MaxHp = 1800f;
         public const float PhysicalResistance = 0.8f;
@@ -26,8 +27,25 @@ namespace UnfinishedForm.Escape
         public const float EchoSoulDamage = 50f;
         public const float NonEgoSetHeal = 80f;
 
+        public const float CocoonMaxHp = 1500f;
+        public const float BodyMaxHp = 1200f;
+        public const float CocoonPhysicalResistance = 0.2f;
+        public const float CocoonMentalResistance = 0.5f;
+        public const float CocoonErosionResistance = 0.4f;
+        public const float CocoonSoulResistance = -1.0f;
+
+        public const float CocoonDesirePulseIntervalSeconds = 10f;
+        public const float DesireDamageReductionPerEmployee = 0.05f;
+        public const float DesireDamageReductionCap = 0.40f;
+        public const float BelongingDamageReductionPerEmployee = 0.10f;
+        public const float BelongingHealIntervalSeconds = 5f;
+        public const float BelongingHealPerTickPerEmployee = 30f;
+        public const float CocoonOverflowToBodyRatio = 0.30f;
+
         private readonly List<BossTarget> _employees = new List<BossTarget>();
         private float _echoTimer;
+        private float _cocoonDesireTimer;
+        private float _cocoonHealTimer;
 
         public BossEncounter(ContainmentManager containment)
         {
@@ -35,6 +53,7 @@ namespace UnfinishedForm.Escape
             Phase = new BossPhaseStateMachine();
             Alarm = new GlobalAlarm();
             Alarm.DesirePulse += ApplyAlarmPulse;
+            Phase.PhaseChanged += OnPhaseChanged;
 
             if (containment != null)
             {
@@ -53,7 +72,14 @@ namespace UnfinishedForm.Escape
 
         public GlobalAlarm Alarm { get; }
 
+        /// <summary>第一阶段 Boss 生命值。</summary>
         public float Hp { get; private set; } = MaxHp;
+
+        /// <summary>第二阶段光茧生命值；未进入第二阶段时为 0。</summary>
+        public float CocoonHp { get; private set; }
+
+        /// <summary>隐藏的本体生命值。</summary>
+        public float BodyHp { get; private set; } = BodyMaxHp;
 
         public int GazeStacks { get; private set; }
 
@@ -65,7 +91,15 @@ namespace UnfinishedForm.Escape
 
         public EchoResult LastEcho { get; private set; }
 
-        /// <summary>从非套装员工处复制的最高属性累计值。</summary>
+        /// <summary>最近一次对茧的结算伤害。</summary>
+        public float LastCocoonDamage { get; private set; }
+
+        /// <summary>最近一次破茧时的溢出伤害。</summary>
+        public float LastOverflowDamage { get; private set; }
+
+        /// <summary>最近一次转移到本体的伤害。</summary>
+        public float LastBodyDamage { get; private set; }
+
         public float CopiedPowerBonus { get; private set; }
 
         public string LastCopiedStatName { get; private set; }
@@ -76,13 +110,87 @@ namespace UnfinishedForm.Escape
 
         public bool IsPhaseOne => Phase.CurrentPhase == BossPhase.PhaseOne;
 
+        public bool IsPhaseTwo => Phase.CurrentPhase == BossPhase.PhaseTwo;
+
+        public bool IsPhaseThree => Phase.CurrentPhase == BossPhase.PhaseThree;
+
+        public int LivingDesireEmployeeCount
+        {
+            get
+            {
+                int count = 0;
+
+                for (int i = 0; i < _employees.Count; i++)
+                {
+                    BossTarget employee = _employees[i];
+
+                    if (employee.IsAlive && employee.DesireStacks > 0)
+                    {
+                        count++;
+                    }
+                }
+
+                return count;
+            }
+        }
+
+        public int BelongingEmployeeCount
+        {
+            get
+            {
+                int count = 0;
+
+                for (int i = 0; i < _employees.Count; i++)
+                {
+                    BossTarget employee = _employees[i];
+
+                    if (employee.IsAlive && employee.IsBelonging)
+                    {
+                        count++;
+                    }
+                }
+
+                return count;
+            }
+        }
+
+        /// <summary>渴望员工提供的减伤，最高 40%。</summary>
+        public float DesireDamageReduction =>
+            Math.Min(LivingDesireEmployeeCount * DesireDamageReductionPerEmployee, DesireDamageReductionCap);
+
+        /// <summary>归属员工提供的额外减伤。</summary>
+        public float BelongingDamageReduction =>
+            BelongingEmployeeCount * BelongingDamageReductionPerEmployee;
+
+        /// <summary>茧当前总减伤；只在第二阶段计算。</summary>
+        public float CocoonDamageReduction
+        {
+            get
+            {
+                if (!IsPhaseTwo)
+                {
+                    return 0f;
+                }
+
+                return Math.Min(1f, DesireDamageReduction + BelongingDamageReduction);
+            }
+        }
+
         public IReadOnlyList<BossTarget> TrackedEmployees => _employees;
 
         public event Action<ReflectionResult> ReflectionResolved;
 
         public event Action<EchoResult> EchoTriggered;
 
-        /// <summary>把员工加入全设施名单，警报脉冲会自动给其增加「渴望」。</summary>
+        public event Action PhaseTwoStarted;
+
+        /// <summary>第三阶段入口事件。技能尚未实现。</summary>
+        public event Action PhaseThreeStarted;
+
+        /// <summary>茧每 10 秒施加渴望时触发，参数为每名存活员工获得的层数。</summary>
+        public event Action<int> CocoonDesirePulse;
+
+        /// <summary>把员工加入全设施名单，警报与茧的渴望会作用于名单。</summary>
         public void TrackEmployee(BossTarget employee)
         {
             if (employee != null && !_employees.Contains(employee))
@@ -96,6 +204,22 @@ namespace UnfinishedForm.Escape
             if (employee != null)
             {
                 _employees.Remove(employee);
+            }
+        }
+
+        /// <summary>员工恐慌时标记为「归属」。标记会保留到后续阶段。</summary>
+        public void MarkBelonging(BossTarget employee)
+        {
+            if (employee == null)
+            {
+                return;
+            }
+
+            TrackEmployee(employee);
+
+            if (employee.IsAlive)
+            {
+                employee.IsBelonging = true;
             }
         }
 
@@ -113,7 +237,7 @@ namespace UnfinishedForm.Escape
             Escape.RequestEscape();
         }
 
-        /// <summary>每帧推进出逃、警报与未竟回响计时。</summary>
+        /// <summary>每帧推进出逃、警报、第一阶段回响或第二阶段茧机制。</summary>
         public void Tick(float deltaTime)
         {
             if (deltaTime <= 0f)
@@ -124,17 +248,27 @@ namespace UnfinishedForm.Escape
             Escape.Tick(deltaTime);
             Alarm.Tick(deltaTime);
 
-            if (!IsActive || !IsPhaseOne)
+            if (!IsActive)
             {
                 return;
             }
 
-            _echoTimer += deltaTime;
-
-            while (_echoTimer >= EchoIntervalSeconds)
+            if (IsPhaseOne)
             {
-                _echoTimer -= EchoIntervalSeconds;
-                TriggerEcho();
+                _echoTimer += deltaTime;
+
+                while (_echoTimer >= EchoIntervalSeconds)
+                {
+                    _echoTimer -= EchoIntervalSeconds;
+                    TriggerEcho();
+                }
+
+                return;
+            }
+
+            if (IsPhaseTwo)
+            {
+                TickCocoon(deltaTime);
             }
         }
 
@@ -148,6 +282,8 @@ namespace UnfinishedForm.Escape
             {
                 return null;
             }
+
+            TrackEmployee(target);
 
             BossPhase phaseBefore = Phase.CurrentPhase;
             int gazeBefore = GazeStacks;
@@ -198,7 +334,10 @@ namespace UnfinishedForm.Escape
             return result;
         }
 
-        /// <summary>按抗性倍率对 Boss 造成伤害，并检查 50% 阶段阈值。</summary>
+        /// <summary>
+        /// 对当前形态造成伤害。第一阶段返回实际扣血，第二阶段返回结算后的有效伤害，
+        /// 第三阶段返回本体扣血。第二阶段的溢出伤害详情见 LastOverflowDamage。
+        /// </summary>
         public float ApplyDamage(DamageType damageType, float amount)
         {
             if (!IsActive || amount <= 0f)
@@ -206,12 +345,25 @@ namespace UnfinishedForm.Escape
                 return 0f;
             }
 
-            float actualDamage = amount * GetResistance(damageType);
-            Hp = Math.Max(0f, Hp - actualDamage);
-            Phase.NotifyHpChanged(Hp, MaxHp);
-            return actualDamage;
+            if (IsPhaseOne)
+            {
+                return ApplyPhaseOneDamage(damageType, amount);
+            }
+
+            if (IsPhaseTwo)
+            {
+                return ApplyCocoonDamage(damageType, amount);
+            }
+
+            if (IsPhaseThree)
+            {
+                return ApplyBodyDamage(amount);
+            }
+
+            return 0f;
         }
 
+        /// <summary>第一阶段 Boss 抗性倍率。</summary>
         public float GetResistance(DamageType damageType)
         {
             switch (damageType)
@@ -233,6 +385,28 @@ namespace UnfinishedForm.Escape
             }
         }
 
+        /// <summary>第二阶段光茧抗性。负抗性表示弱点，会按 1 + |抗性| 放大伤害。</summary>
+        public float GetCocoonResistance(DamageType damageType)
+        {
+            switch (damageType)
+            {
+                case DamageType.Physical:
+                    return CocoonPhysicalResistance;
+
+                case DamageType.Mental:
+                    return CocoonMentalResistance;
+
+                case DamageType.Erosion:
+                    return CocoonErosionResistance;
+
+                case DamageType.Soul:
+                    return CocoonSoulResistance;
+
+                default:
+                    return 1f;
+            }
+        }
+
         /// <summary>镇压后结束出逃并停止全局警报。</summary>
         public void EndEscape()
         {
@@ -240,10 +414,106 @@ namespace UnfinishedForm.Escape
             Alarm.Deactivate();
         }
 
-        /// <summary>复位 Boss 与出逃状态，保留已登记的员工名单。</summary>
+        /// <summary>复位 Boss 与出逃状态，保留员工名单、渴望与归属标记。</summary>
         public void Reset()
         {
             ResetState();
+        }
+
+        private void TickCocoon(float deltaTime)
+        {
+            _cocoonDesireTimer += deltaTime;
+
+            while (_cocoonDesireTimer >= CocoonDesirePulseIntervalSeconds)
+            {
+                _cocoonDesireTimer -= CocoonDesirePulseIntervalSeconds;
+                ApplyCocoonDesirePulse();
+            }
+
+            _cocoonHealTimer += deltaTime;
+
+            while (_cocoonHealTimer >= BelongingHealIntervalSeconds)
+            {
+                _cocoonHealTimer -= BelongingHealIntervalSeconds;
+                HealCocoonFromBelonging();
+            }
+        }
+
+        private void ApplyCocoonDesirePulse()
+        {
+            for (int i = 0; i < _employees.Count; i++)
+            {
+                BossTarget employee = _employees[i];
+
+                if (employee.IsAlive)
+                {
+                    employee.DesireStacks += 1;
+                }
+            }
+
+            CocoonDesirePulse?.Invoke(1);
+        }
+
+        private void HealCocoonFromBelonging()
+        {
+            int count = BelongingEmployeeCount;
+
+            if (count <= 0)
+            {
+                return;
+            }
+
+            float heal = BelongingHealPerTickPerEmployee * count;
+            CocoonHp = Math.Min(CocoonMaxHp, CocoonHp + heal);
+        }
+
+        private float ApplyPhaseOneDamage(DamageType damageType, float amount)
+        {
+            ResetLastDamageFields();
+
+            float actualDamage = amount * GetResistance(damageType);
+            Hp = Math.Max(0f, Hp - actualDamage);
+            Phase.NotifyHpChanged(Hp, MaxHp);
+            return actualDamage;
+        }
+
+        private float ApplyCocoonDamage(DamageType damageType, float amount)
+        {
+            ResetLastDamageFields();
+
+            float multiplier = ResistanceToMultiplier(GetCocoonResistance(damageType));
+            float reduction = CocoonDamageReduction;
+            float effectiveDamage = amount * multiplier * Math.Max(0f, 1f - reduction);
+
+            if (effectiveDamage <= 0f)
+            {
+                return 0f;
+            }
+
+            float previousCocoonHp = CocoonHp;
+            CocoonHp = Math.Max(0f, CocoonHp - effectiveDamage);
+            LastCocoonDamage = previousCocoonHp - CocoonHp;
+
+            if (CocoonHp <= 0f)
+            {
+                float overflow = Math.Max(0f, effectiveDamage - LastCocoonDamage);
+                LastOverflowDamage = overflow;
+                LastBodyDamage = overflow * CocoonOverflowToBodyRatio;
+                BodyHp = Math.Max(0f, BodyHp - LastBodyDamage);
+                Phase.NotifyCocoonBroken();
+            }
+
+            return effectiveDamage;
+        }
+
+        private float ApplyBodyDamage(float amount)
+        {
+            ResetLastDamageFields();
+
+            float damage = Math.Max(0f, amount);
+            BodyHp = Math.Max(0f, BodyHp - damage);
+            LastBodyDamage = damage;
+            return damage;
         }
 
         private void ResetState()
@@ -253,6 +523,8 @@ namespace UnfinishedForm.Escape
             Phase.Reset();
 
             Hp = MaxHp;
+            CocoonHp = 0f;
+            BodyHp = BodyMaxHp;
             GazeStacks = 0;
             ReflectionCount = 0;
             EchoCount = 0;
@@ -262,6 +534,40 @@ namespace UnfinishedForm.Escape
             LastCopiedStatName = null;
             LastCopiedStatValue = 0f;
             _echoTimer = 0f;
+            _cocoonDesireTimer = 0f;
+            _cocoonHealTimer = 0f;
+            ResetLastDamageFields();
+        }
+
+        private void ResetLastDamageFields()
+        {
+            LastCocoonDamage = 0f;
+            LastOverflowDamage = 0f;
+            LastBodyDamage = 0f;
+        }
+
+        private void OnPhaseChanged(BossPhase previousPhase, BossPhase currentPhase)
+        {
+            if (currentPhase == BossPhase.PhaseTwo)
+            {
+                EnterPhaseTwo();
+            }
+            else if (currentPhase == BossPhase.PhaseThree)
+            {
+                _cocoonDesireTimer = 0f;
+                _cocoonHealTimer = 0f;
+                PhaseThreeStarted?.Invoke();
+            }
+        }
+
+        private void EnterPhaseTwo()
+        {
+            CocoonHp = CocoonMaxHp;
+            BodyHp = BodyMaxHp;
+            _cocoonDesireTimer = 0f;
+            _cocoonHealTimer = 0f;
+            ResetLastDamageFields();
+            PhaseTwoStarted?.Invoke();
         }
 
         private void AddGaze(int amount)
@@ -307,8 +613,18 @@ namespace UnfinishedForm.Escape
         {
             for (int i = 0; i < _employees.Count; i++)
             {
-                _employees[i].DesireStacks += stacks;
+                BossTarget employee = _employees[i];
+
+                if (employee.IsAlive)
+                {
+                    employee.DesireStacks += stacks;
+                }
             }
+        }
+
+        private static float ResistanceToMultiplier(float resistance)
+        {
+            return resistance >= 0f ? resistance : 1f + Math.Abs(resistance);
         }
     }
 }
