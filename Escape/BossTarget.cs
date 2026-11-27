@@ -16,6 +16,9 @@ namespace UnfinishedForm.Escape
 
         public bool IsBelonging { get; set; }
 
+        /// <summary>是否处于套装员工专属的「显影」状态。</summary>
+        public bool IsManifesting { get; set; }
+
         public int DesireStacks { get; set; }
 
         public int LightShadowStacks { get; set; }

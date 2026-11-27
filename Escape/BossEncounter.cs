@@ -8,7 +8,7 @@ namespace UnfinishedForm.Escape
     /// 「未竟之形」出逃战。第一阶段为摹仿·反照，第二阶段为茧中梦；
     /// 第三阶段只保留阶段接口，不实现技能。
     /// </summary>
-    public sealed class BossEncounter
+    public sealed partial class BossEncounter
     {
         public const string PhaseOneName = "摹仿·反照";
         public const string PhaseTwoName = "茧中梦";
@@ -43,12 +43,19 @@ namespace UnfinishedForm.Escape
         public const float CocoonOverflowToBodyRatio = 0.30f;
 
         private readonly List<BossTarget> _employees = new List<BossTarget>();
+        private readonly Random _random;
         private float _echoTimer;
         private float _cocoonDesireTimer;
         private float _cocoonHealTimer;
 
         public BossEncounter(ContainmentManager containment)
+            : this(containment, new Random())
         {
+        }
+
+        public BossEncounter(ContainmentManager containment, Random random)
+        {
+            _random = random ?? new Random();
             Escape = new EscapeStateMachine();
             Phase = new BossPhaseStateMachine();
             Alarm = new GlobalAlarm();
@@ -269,6 +276,12 @@ namespace UnfinishedForm.Escape
             if (IsPhaseTwo)
             {
                 TickCocoon(deltaTime);
+                return;
+            }
+
+            if (IsPhaseThree)
+            {
+                TickPhaseThree(deltaTime);
             }
         }
 
@@ -357,7 +370,7 @@ namespace UnfinishedForm.Escape
 
             if (IsPhaseThree)
             {
-                return ApplyBodyDamage(amount);
+                return ApplyPhaseThreeDamage(damageType, amount);
             }
 
             return 0f;
@@ -506,16 +519,6 @@ namespace UnfinishedForm.Escape
             return effectiveDamage;
         }
 
-        private float ApplyBodyDamage(float amount)
-        {
-            ResetLastDamageFields();
-
-            float damage = Math.Max(0f, amount);
-            BodyHp = Math.Max(0f, BodyHp - damage);
-            LastBodyDamage = damage;
-            return damage;
-        }
-
         private void ResetState()
         {
             Escape.Reset();
@@ -536,6 +539,7 @@ namespace UnfinishedForm.Escape
             _echoTimer = 0f;
             _cocoonDesireTimer = 0f;
             _cocoonHealTimer = 0f;
+            ResetPhaseThreeState();
             ResetLastDamageFields();
         }
 
@@ -556,7 +560,7 @@ namespace UnfinishedForm.Escape
             {
                 _cocoonDesireTimer = 0f;
                 _cocoonHealTimer = 0f;
-                PhaseThreeStarted?.Invoke();
+                EnterPhaseThree();
             }
         }
 
