@@ -5,44 +5,44 @@
     <riskLevel>4</riskLevel>
     <maxWorkCount>9</maxWorkCount>
     <workProb type="R">
-      <prob level="1">0.5</prob>
-      <prob level="2">0.5</prob>
-      <prob level="3">0.5</prob>
-      <prob level="4">0.5</prob>
-      <prob level="5">0.5</prob>
+      <prob level="1">0.6</prob>
+      <prob level="2">0.6</prob>
+      <prob level="3">0.6</prob>
+      <prob level="4">0.6</prob>
+      <prob level="5">0.6</prob>
     </workProb>
     <workProb type="W">
-      <prob level="1">0.5</prob>
-      <prob level="2">0.5</prob>
-      <prob level="3">0.5</prob>
-      <prob level="4">0.5</prob>
-      <prob level="5">0.5</prob>
+      <prob level="1">0.6</prob>
+      <prob level="2">0.6</prob>
+      <prob level="3">0.6</prob>
+      <prob level="4">0.6</prob>
+      <prob level="5">0.6</prob>
     </workProb>
     <workProb type="B">
-      <prob level="1">0.5</prob>
-      <prob level="2">0.5</prob>
-      <prob level="3">0.5</prob>
-      <prob level="4">0.5</prob>
-      <prob level="5">0.5</prob>
+      <prob level="1">0.2</prob>
+      <prob level="2">0.2</prob>
+      <prob level="3">0.2</prob>
+      <prob level="4">0.2</prob>
+      <prob level="5">0.2</prob>
     </workProb>
     <workProb type="P">
-      <prob level="1">0.5</prob>
-      <prob level="2">0.5</prob>
-      <prob level="3">0.5</prob>
-      <prob level="4">0.5</prob>
-      <prob level="5">0.5</prob>
+      <prob level="1">0.05</prob>
+      <prob level="2">0.05</prob>
+      <prob level="3">0.05</prob>
+      <prob level="4">0.05</prob>
+      <prob level="5">0.05</prob>
     </workProb>
-    <qliphoth>3</qliphoth>
+    <qliphoth>5</qliphoth>
     <workCooltime>15</workCooltime>
     <escapeable>true</escapeable>
     <hp>1200</hp>
     <speed>0</speed>
     <feelingStateCubeBounds>
-      <cube>10</cube>
-      <cube>20</cube>
-      <cube>35</cube>
+      <cube>0</cube>
+      <cube>14</cube>
+      <cube>24</cube>
     </feelingStateCubeBounds>
-    <workDamage type="P" min="4" max="6" />
+    <workDamage type="R" min="4" max="7" />
     <workSpeed>0.4</workSpeed>
     <observeInfo total="112">
       <observeElement name="stat" cost="20" />

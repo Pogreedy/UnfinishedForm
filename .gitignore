@@ -1,4 +1,4 @@
-# Build output
+﻿# Build output
 bin/
 obj/
 
@@ -15,3 +15,4 @@ local.props
 
 # Logs
 *.log
+.dotnet-home/

@@ -42,11 +42,11 @@
     </desc>
 
     <specialTipSize size="5">
-      <specialTip openLevel="0" key="0">工作结果不为“差”时，可以正常获得 PE-BOX。</specialTip>
-      <specialTip openLevel="1" key="1">完成工作后，逆卡巴拉计数器有概率减少。</specialTip>
-      <specialTip openLevel="2" key="2">压迫结果为“差”时，逆卡巴拉计数器立即减少。</specialTip>
-      <specialTip openLevel="3" key="3">逆卡巴拉计数器归零后，“未竟之形”会离开收容单元。</specialTip>
-      <specialTip openLevel="3" key="4">出逃后，普通的镇压无法彻底终止它；必须完成它未竟的工作。</specialTip>
+      <specialTip openLevel="0" key="0">本异想体接受特殊的【审判】工作（界面显示为“压迫”）。审判必定导致逆卡巴拉计数器立即减少。</specialTip>
+      <specialTip openLevel="1" key="1">审判结果为“差”时，触发“未竟回响”：对执行审判的员工造成 10 点精神伤害，并额外减少 1 点逆卡巴拉计数器。</specialTip>
+      <specialTip openLevel="1" key="2">本能工作结果为“优”时，参与该工作的员工当天免疫恐慌；本能结果为“差”时，逆卡巴拉计数器减少。</specialTip>
+      <specialTip openLevel="2" key="3">洞察或沟通工作结果为“优”时，逆卡巴拉计数器增加；达到最大值 5 时进入“静默饱和”。</specialTip>
+      <specialTip openLevel="3" key="4">逆卡巴拉计数器归零后，“未竟之形”出逃。出逃期间普通镇压无法终止它，必须完成未竟之事。</specialTip>
     </specialTipSize>
   </observe>
 </creature>
