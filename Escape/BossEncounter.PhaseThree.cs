@@ -27,6 +27,8 @@ namespace UnfinishedForm.Escape
         public const float LightShadowReflectionResistancePenalty = -0.2f;
 
         public const int AntiManifestGazeCost = 3;
+        public const float AntiManifestDefinedSecondsBase = 4f;
+        public const float AntiManifestDefinedSecondsCrown = 2f;
         public const float BelongingReviveSeconds = 5f;
 
         private readonly List<BossPhantom> _phantoms = new List<BossPhantom>();
@@ -340,9 +342,16 @@ namespace UnfinishedForm.Escape
             employee.IsManifesting = false;
             _antiManifestUsed = true;
 
+            float definedSeconds = employee.HasUnfinishedCrown
+                ? AntiManifestDefinedSecondsCrown
+                : AntiManifestDefinedSecondsBase;
+
+            employee.DefinedSecondsRemaining = definedSeconds;
+
             result.Interrupted = true;
             result.GazeConsumed = AntiManifestGazeCost;
             result.GazeStacksAfter = GazeStacks;
+            result.DefinedSeconds = definedSeconds;
             result.Reason = "显影已打断";
 
             LastAntiManifest = result;

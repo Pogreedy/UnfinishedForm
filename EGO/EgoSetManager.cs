@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 
 namespace UnfinishedForm.EGO
 {
     /// <summary>
-    /// 套装注册与联动查询入口。三件套匹配与加成判定均未实现。
+    /// 套装注册与三件套匹配入口。
     /// </summary>
     public sealed class EgoSetManager
     {
@@ -13,32 +14,103 @@ namespace UnfinishedForm.EGO
         /// <summary>已注册的套装。</summary>
         public IReadOnlyDictionary<string, EgoSetDefinition> Sets => _sets;
 
-        /// <summary>注册一个 EGO 套装。</summary>
+        /// <summary>注册一个 EGO 套装；同 Id 会覆盖旧定义。</summary>
         public void Register(EgoSetDefinition set)
         {
-            // TODO: 校验三件套 Id、件数需求与重复注册。
+            if (set == null || string.IsNullOrEmpty(set.Id))
+            {
+                return;
+            }
+
+            _sets[set.Id] = set;
         }
 
         /// <summary>按套装 Id 查询。</summary>
         public bool TryGet(string setId, out EgoSetDefinition set)
         {
-            // TODO
-            set = null;
-            return false;
+            if (string.IsNullOrEmpty(setId))
+            {
+                set = null;
+                return false;
+            }
+
+            return _sets.TryGetValue(setId, out set);
         }
 
-        /// <summary>返回当前装备组合对应的生效套装。</summary>
+        /// <summary>返回当前装备组合对应的三件套套装。</summary>
         public EgoSetDefinition ResolveActiveSet(EgoLoadout loadout)
         {
-            // TODO: 判断武器/护甲/饰品是否同属一个套装。
+            if (loadout == null)
+            {
+                return null;
+            }
+
+            foreach (EgoSetDefinition set in _sets.Values)
+            {
+                if (ResolvePieceCount(set, loadout) >= 3)
+                {
+                    return set;
+                }
+            }
+
             return null;
         }
 
         /// <summary>返回当前装备组合已满足件数条件的套装加成。</summary>
         public IReadOnlyList<EgoSetBonusDefinition> ResolveActiveBonuses(EgoLoadout loadout)
         {
-            // TODO
-            return null;
+            var activeBonuses = new List<EgoSetBonusDefinition>();
+            EgoSetDefinition set = ResolveActiveSet(loadout);
+
+            if (set == null)
+            {
+                return activeBonuses;
+            }
+
+            int pieceCount = ResolvePieceCount(set, loadout);
+
+            for (int i = 0; i < set.Bonuses.Count; i++)
+            {
+                EgoSetBonusDefinition bonus = set.Bonuses[i];
+
+                if (bonus != null && bonus.RequiredPieces <= pieceCount)
+                {
+                    activeBonuses.Add(bonus);
+                }
+            }
+
+            return activeBonuses;
+        }
+
+        /// <summary>计算某个套装的已装备件数。</summary>
+        public int ResolvePieceCount(EgoSetDefinition set, EgoLoadout loadout)
+        {
+            if (set == null || loadout == null)
+            {
+                return 0;
+            }
+
+            int count = 0;
+
+            if (!string.IsNullOrEmpty(set.WeaponId)
+                && string.Equals(set.WeaponId, loadout.WeaponId, StringComparison.Ordinal))
+            {
+                count++;
+            }
+
+            if (!string.IsNullOrEmpty(set.SuitId)
+                && string.Equals(set.SuitId, loadout.SuitId, StringComparison.Ordinal))
+            {
+                count++;
+            }
+
+            if (!string.IsNullOrEmpty(set.GiftId)
+                && string.Equals(set.GiftId, loadout.GiftId, StringComparison.Ordinal))
+            {
+                count++;
+            }
+
+            return count;
         }
     }
 }

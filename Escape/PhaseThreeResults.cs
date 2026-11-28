@@ -59,6 +59,9 @@ namespace UnfinishedForm.Escape
 
         public bool AlreadyUsedThisPhase { get; set; }
 
+        /// <summary>反显影成功后施加的「被定义」秒数。</summary>
+        public float DefinedSeconds { get; set; }
+
         public string Reason { get; set; }
     }
 }

@@ -44,6 +44,25 @@ namespace UnfinishedForm.Escape
         public event Action BossSuppressed;
 
         /// <summary>第四阶段抗性：护盾存在时使用护盾抗性，破碎后使用本体抗性。</summary>
+        /// <summary>直接削减第四阶段护盾；用于「冠冕反照」。</summary>
+        public float ReducePhaseFourShield(float amount)
+        {
+            if (!IsPhaseFour || IsSuppressed || amount <= 0f || ShieldHp <= 0f)
+            {
+                return 0f;
+            }
+
+            float previousShield = ShieldHp;
+            ShieldHp = Math.Max(0f, ShieldHp - amount);
+
+            if (ShieldHp <= 0f)
+            {
+                PhaseFourShieldBroken?.Invoke();
+            }
+
+            return previousShield - ShieldHp;
+        }
+
         public float GetPhaseFourResistance(DamageType damageType)
         {
             bool shielded = ShieldHp > 0f;

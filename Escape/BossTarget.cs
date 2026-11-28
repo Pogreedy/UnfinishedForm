@@ -19,6 +19,15 @@ namespace UnfinishedForm.Escape
         /// <summary>是否处于套装员工专属的「显影」状态。</summary>
         public bool IsManifesting { get; set; }
 
+        /// <summary>是否装备「未竟之冠」。</summary>
+        public bool HasUnfinishedCrown { get; set; }
+
+        /// <summary>反显影「被定义」剩余秒数。</summary>
+        public float DefinedSecondsRemaining { get; set; }
+
+        /// <summary>「未竟形态」剩余秒数。</summary>
+        public float UnfinishedFormSeconds { get; set; }
+
         public int DesireStacks { get; set; }
 
         public int LightShadowStacks { get; set; }

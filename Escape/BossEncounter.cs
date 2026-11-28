@@ -47,6 +47,7 @@ namespace UnfinishedForm.Escape
         private float _echoTimer;
         private float _cocoonDesireTimer;
         private float _cocoonHealTimer;
+        private float _cocoonDamageReductionPenalty;
 
         public BossEncounter(ContainmentManager containment)
             : this(containment, new Random())
@@ -179,8 +180,26 @@ namespace UnfinishedForm.Escape
                     return 0f;
                 }
 
-                return Math.Min(1f, DesireDamageReduction + BelongingDamageReduction);
+                float reduction = DesireDamageReduction
+                    + BelongingDamageReduction
+                    - _cocoonDamageReductionPenalty;
+
+                return Math.Max(0f, Math.Min(1f, reduction));
             }
+        }
+
+        /// <summary>冠冕反照等效果对茧减伤的额外削减。</summary>
+        public float CocoonDamageReductionPenalty => _cocoonDamageReductionPenalty;
+
+        /// <summary>降低茧的减伤；用于「冠冕反照」。</summary>
+        public void ReduceCocoonDamageReduction(float amount)
+        {
+            if (amount <= 0f)
+            {
+                return;
+            }
+
+            _cocoonDamageReductionPenalty += amount;
         }
 
         public IReadOnlyList<BossTarget> TrackedEmployees => _employees;
@@ -550,6 +569,7 @@ namespace UnfinishedForm.Escape
             _echoTimer = 0f;
             _cocoonDesireTimer = 0f;
             _cocoonHealTimer = 0f;
+            _cocoonDamageReductionPenalty = 0f;
             ResetPhaseThreeState();
             ResetPhaseFourState();
             ResetLastDamageFields();
@@ -586,6 +606,7 @@ namespace UnfinishedForm.Escape
             BodyHp = BodyMaxHp;
             _cocoonDesireTimer = 0f;
             _cocoonHealTimer = 0f;
+            _cocoonDamageReductionPenalty = 0f;
             ResetLastDamageFields();
             PhaseTwoStarted?.Invoke();
         }
