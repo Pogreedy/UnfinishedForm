@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <creature>
-  <info id="29901">
+  <info id="99001">
     <narration action="move">
       #0被分配到“0”的收容单元中。
     </narration>

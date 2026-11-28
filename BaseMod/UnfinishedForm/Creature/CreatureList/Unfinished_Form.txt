@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <creature_list>
-  <creature name="Unfinished_Form" src="Unfinished_Form" id="29901">
+  <creature name="Unfinished_Form" src="Unfinished_Form" id="99001">
     <stat>Unfinished_Form_stat</stat>
   </creature>
 </creature_list>
