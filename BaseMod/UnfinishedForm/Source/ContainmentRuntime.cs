@@ -99,7 +99,23 @@ namespace UnfinishedForm.BaseMod
         /// <summary>只对「未竟之形」把工作选择界面的“压迫”按钮显示为“审判”。</summary>
         public static void OnCreateCommandWindow(CommandWindow.CommandWindow __instance, UnitModel target)
         {
-            if (__instance == null || __instance.workNames == null || __instance.workNames.Length < 4)
+            ApplyWorkLabel(__instance, target);
+        }
+
+        /// <summary>本地化/OnEnable 可能在 CreateWindow 后再次覆盖文本，因此每帧兜底一次。</summary>
+        public static void OnCommandWindowUpdate(CommandWindow.CommandWindow __instance)
+        {
+            if (__instance == null)
+            {
+                return;
+            }
+
+            ApplyWorkLabel(__instance, __instance.CurrentTarget);
+        }
+
+        private static void ApplyWorkLabel(CommandWindow.CommandWindow window, UnitModel target)
+        {
+            if (window == null || window.workNames == null || window.workNames.Length < 4)
             {
                 return;
             }
@@ -112,21 +128,21 @@ namespace UnfinishedForm.BaseMod
             }
 
             // 不依赖按钮下标：找到当前显示为“压迫/审判”的工作名并替换。
-            for (int i = 0; i < __instance.workNames.Length; i++)
+            for (int i = 0; i < window.workNames.Length; i++)
             {
-                if (__instance.workNames[i] == null || __instance.workNames[i].Text == null)
+                if (window.workNames[i] == null || window.workNames[i].Text == null)
                 {
                     continue;
                 }
 
-                string current = __instance.workNames[i].Text.text;
-                if (isOurs && (current == "压迫" || current == "审判"))
+                string current = window.workNames[i].Text.text;
+                if (isOurs && current == "压迫")
                 {
-                    __instance.workNames[i].SetTextForcely("审判");
+                    window.workNames[i].SetTextForcely("审判");
                 }
                 else if (!isOurs && current == "审判")
                 {
-                    __instance.workNames[i].SetTextForcely("压迫");
+                    window.workNames[i].SetTextForcely("压迫");
                 }
             }
         }

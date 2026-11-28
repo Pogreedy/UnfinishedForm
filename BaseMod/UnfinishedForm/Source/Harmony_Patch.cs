@@ -29,6 +29,7 @@ namespace UnfinishedForm.BaseMod
             Patch(harmony, typeof(CreatureBase), "OnStageStart", nameof(ContainmentRuntime.OnStageStart), false);
             Patch(harmony, typeof(AgentModel), "Panic", nameof(ContainmentRuntime.SuppressPanic), true);
             Patch(harmony, typeof(CommandWindow.CommandWindow), "CreateWindow", nameof(ContainmentRuntime.OnCreateCommandWindow), false);
+            Patch(harmony, typeof(CommandWindow.CommandWindow), "Update", nameof(ContainmentRuntime.OnCommandWindowUpdate), false);
             _installed = true;
             Debug.Log("[UnfinishedForm] Harmony_Patch 安装完成。");
         }
