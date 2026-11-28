@@ -18,7 +18,6 @@ namespace UnfinishedForm.BaseMod
             }
 
             HarmonyInstance harmony = HarmonyInstance.Create("UnfinishedForm.BaseMod");
-            Patch(harmony, typeof(CreatureBase), "OnFinishWork", nameof(ContainmentRuntime.OnFinishWork), false);
             Patch(harmony, typeof(CreatureBase), "OnStageStart", nameof(ContainmentRuntime.OnStageStart), false);
             Patch(harmony, typeof(AgentModel), "Panic", nameof(ContainmentRuntime.SuppressPanic), true);
             _installed = true;
