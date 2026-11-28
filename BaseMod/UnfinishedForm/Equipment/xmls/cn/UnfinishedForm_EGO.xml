@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<localize>
+  <text id="UnfinishedForm_weapon_name">未竟·显影</text>
+  <text id="UnfinishedForm_weapon_no">Unfinished</text>
+  <text id="UnfinishedForm_weapon_desc">尚未完成的武器，仍然保留着被完成的渴望。</text>
+  <text id="UnfinishedForm_weapon_sdesc">造成灵魂伤害。持有“未竟之冠”时，武器会回应未竟的渴望。</text>
+
+  <text id="UnfinishedForm_armor_name">摹仿之肤·显影</text>
+  <text id="UnfinishedForm_armor_no">Mimicry</text>
+  <text id="UnfinishedForm_armor_desc">一层会模仿穿戴者轮廓的皮肤，仍在等待真正的形状。</text>
+  <text id="UnfinishedForm_armor_sdesc">物理 0.2 / 精神 0.2 / 侵蚀 0.3 / 灵魂 0.4。</text>
+
+  <text id="UnfinishedForm_gift_name">未竟之冠</text>
+  <text id="UnfinishedForm_gift_desc">未完成的冠冕，仍然记得自己本应成为什么。
+最大生命值 +10，最大精神值 +10，工作速度 +10，移动速度 +10，攻击速度 +10。</text>
+</localize>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <creature>
   <script>DummyCreature</script>
   <stat>
@@ -64,6 +64,9 @@
     <observeBonus level="3" type="prob">3</observeBonus>
     <observeBonus level="4" type="speed">3</observeBonus>
     <observeBonus level="5" type="prob">3</observeBonus>
+    <equipment level="4" cost="16" equipId="30002" />
+    <equipment level="4" cost="16" equipId="30102" />
+    <equipment level="4" prob="1" equipId="30202" />
     <defense id="1">
       <defenseElement type="R">0.8</defenseElement>
       <defenseElement type="W">0.5</defenseElement>

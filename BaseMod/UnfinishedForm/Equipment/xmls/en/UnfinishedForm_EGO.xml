@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<localize>
+  <text id="UnfinishedForm_weapon_name">Unfinished · Manifestation</text>
+  <text id="UnfinishedForm_weapon_no">Unfinished</text>
+  <text id="UnfinishedForm_weapon_desc">A weapon that was never completed, still holding on to the desire to be finished.</text>
+  <text id="UnfinishedForm_weapon_sdesc">Deals Pale damage. While wearing the Crown of the Unfinished, the weapon answers the unfinished desire.</text>
+
+  <text id="UnfinishedForm_armor_name">Mimicry Skin · Manifestation</text>
+  <text id="UnfinishedForm_armor_no">Mimicry</text>
+  <text id="UnfinishedForm_armor_desc">A skin that mimics the wearer's outline, still waiting for its true shape.</text>
+  <text id="UnfinishedForm_armor_sdesc">Physical 0.2 / Mental 0.2 / Erosion 0.3 / Soul 0.4.</text>
+
+  <text id="UnfinishedForm_gift_name">Crown of the Unfinished</text>
+  <text id="UnfinishedForm_gift_desc">An unfinished crown that still remembers what it was meant to become.
+Max HP +10, Max SP +10, Work Speed +10, Movement Speed +10, Attack Speed +10.</text>
+</localize>
