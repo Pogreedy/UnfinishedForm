@@ -12,5 +12,10 @@
 
   <text id="UnfinishedForm_gift_name">Crown of the Unfinished</text>
   <text id="UnfinishedForm_gift_desc">An unfinished crown that still remembers what it was meant to become.
-Max HP +10, Max SP +10, Work Speed +10, Movement Speed +10, Attack Speed +10.</text>
+Max HP +10, Max SP +10, Work Speed +10, Movement Speed +10, Attack Speed +10.
+
+[Unfinished Form Set]
+While wearing Unfinished Manifestation, Mimicry Skin, and the Crown of the Unfinished:
+Max HP +10, Max SP +10, Work Success +10, Damage +10, Attack Speed +10.
+Boss-linked effects (Desire Reversal, Refuse Belonging, Crown Reflection, Death Save) are not yet connected.</text>
 </localize>
