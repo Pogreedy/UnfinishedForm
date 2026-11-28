@@ -20,6 +20,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- BaseMod 接入工程单独编译，不进入 BepInEx 插件程序集。 -->
+    <Compile Remove="BaseMod\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- BepInEx 5.4.x x64：运行时由 BepInEx 提供，不复制到输出。 -->
     <Reference Include="BepInEx">
       <HintPath>$(BepInExDir)\BepInEx.dll</HintPath>

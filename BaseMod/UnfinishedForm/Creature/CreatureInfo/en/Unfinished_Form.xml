@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<creature>
+  <info id="29901">
+    <narration action="move">
+      #0 has been assigned to containment unit "0".
+    </narration>
+  </info>
+
+  <observe level="1">
+    <collection>
+      <codeNo openLevel="0">O-00-001</codeNo>
+      <portrait openLevel="1">CreatureSprite/Dummy</portrait>
+      <name openLevel="1">Unfinished Form</name>
+      <riskLevel openLevel="1">ALEPH</riskLevel>
+      <openText>Placeholder abnormality. Containment and four work types only.</openText>
+    </collection>
+
+    <desc id="1" openLevel="1">
+      [
+      {An unfinished form.}
+      ]
+    </desc>
+  </observe>
+</creature>

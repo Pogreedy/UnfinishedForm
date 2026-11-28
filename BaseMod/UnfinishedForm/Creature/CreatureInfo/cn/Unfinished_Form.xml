@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<creature>
+  <info id="29901">
+    <narration action="move">
+      #0被分配到“0”的收容单元中。
+    </narration>
+  </info>
+
+  <observe level="1">
+    <collection>
+      <codeNo openLevel="0">O-00-001</codeNo>
+      <portrait openLevel="1">CreatureSprite/Dummy</portrait>
+      <name openLevel="1">未竟之形</name>
+      <riskLevel openLevel="1">ALEPH</riskLevel>
+      <openText>占位异想体。当前只验证收容与四类工作。</openText>
+    </collection>
+
+    <desc id="1" openLevel="1">
+      [
+      {未竟之形，尚未完成。}
+      ]
+    </desc>
+  </observe>
+</creature>
