@@ -17,10 +17,13 @@ namespace UnfinishedForm.BaseMod
                 return;
             }
 
+            UnityEngine.Debug.Log("[UnfinishedForm] Harmony_Patch 正在安装。");
             HarmonyInstance harmony = HarmonyInstance.Create("UnfinishedForm.BaseMod");
             Patch(harmony, typeof(CreatureBase), "OnStageStart", nameof(ContainmentRuntime.OnStageStart), false);
             Patch(harmony, typeof(AgentModel), "Panic", nameof(ContainmentRuntime.SuppressPanic), true);
+            Patch(harmony, typeof(CommandWindow.CommandWindow), "CreateWindow", nameof(ContainmentRuntime.OnCreateCommandWindow), false);
             _installed = true;
+            UnityEngine.Debug.Log("[UnfinishedForm] Harmony_Patch 安装完成。");
         }
 
         private static void Patch(HarmonyInstance harmony, System.Type type, string target, string patchMethod, bool prefix)

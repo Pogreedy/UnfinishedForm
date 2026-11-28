@@ -95,5 +95,23 @@ namespace UnfinishedForm.BaseMod
         {
             return __instance != null && PanicImmuneAgents.Contains(__instance.instanceId);
         }
+
+        /// <summary>只对「未竟之形」把工作选择界面的“压迫”按钮显示为“审判”。</summary>
+        public static void OnCreateCommandWindow(CommandWindow.CommandWindow __instance, UnitModel target)
+        {
+            if (__instance == null || __instance.workNames == null || __instance.workNames.Length < 4)
+            {
+                return;
+            }
+
+            bool isOurs = false;
+            CreatureModel creature = target as CreatureModel;
+            if (creature != null && creature.metaInfo != null && creature.metaInfo.id == UnfinishedFormId)
+            {
+                isOurs = true;
+            }
+
+            __instance.workNames[3].SetTextForcely(isOurs ? "审判" : "压迫");
+        }
     }
 }

@@ -34,6 +34,7 @@ namespace UnfinishedForm.BaseMod
 
             try
             {
+                UnityEngine.Debug.Log("[UnfinishedForm] OnFinishWork 进入自定义脚本。");
                 ContainmentRuntime.OnFinishWork(this, skill);
 
                 // 压迫/审判完成后直接补齐观察信息，避免 work_p 因单次 PE 不足而漏掉。
