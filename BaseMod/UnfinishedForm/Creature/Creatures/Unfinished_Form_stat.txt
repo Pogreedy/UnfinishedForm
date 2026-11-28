@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <creature>
   <script>DummyCreature</script>
   <stat>
@@ -38,9 +38,9 @@
     <hp>1200</hp>
     <speed>0</speed>
     <feelingStateCubeBounds>
-      <cube>0</cube>
-      <cube>14</cube>
-      <cube>24</cube>
+      <cube>10</cube>
+      <cube>22</cube>
+      <cube>33</cube>
     </feelingStateCubeBounds>
     <workDamage type="R" min="4" max="7" />
     <workSpeed>0.4</workSpeed>
