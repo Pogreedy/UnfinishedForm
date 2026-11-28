@@ -102,15 +102,16 @@ namespace UnfinishedForm.BaseMod
             ApplyWorkLabel(__instance, target);
         }
 
-        /// <summary>本地化/OnEnable 可能在 CreateWindow 后再次覆盖文本，因此每帧兜底一次。</summary>
-        public static void OnCommandWindowUpdate(CommandWindow.CommandWindow __instance)
+        /// <summary>窗口启用时刷新一次。</summary>
+        public static void OnCommandWindowEnable(CommandWindow.CommandWindow __instance)
         {
-            if (__instance == null)
-            {
-                return;
-            }
-
             ApplyWorkLabel(__instance, __instance.CurrentTarget);
+        }
+
+        /// <summary>工作区域数据刷新后刷新一次。</summary>
+        public static void OnWorkAllocateSetData(UnitModel target)
+        {
+            ApplyWorkLabel(CommandWindow.CommandWindow.CurrentWindow, target);
         }
 
         private static void ApplyWorkLabel(CommandWindow.CommandWindow window, UnitModel target)
