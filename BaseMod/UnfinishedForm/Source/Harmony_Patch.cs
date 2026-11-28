@@ -32,8 +32,30 @@ namespace UnfinishedForm.BaseMod
             Patch(harmony, typeof(CommandWindow.CommandWindow), "OnEnable", nameof(ContainmentRuntime.OnCommandWindowEnable), false);
             Patch(harmony, typeof(CommandWindow.WorkAllocateRegion), "SetData", nameof(ContainmentRuntime.OnWorkAllocateSetData), false);
             Patch(harmony, typeof(GameManager), "Update", nameof(BossTestHotkeys.OnGameManagerUpdate), false);
+            PatchCreatureDamage(harmony);
             _installed = true;
             Debug.Log("[UnfinishedForm] Harmony_Patch 安装完成。");
+        }
+
+        private static void PatchCreatureDamage(HarmonyInstance harmony)
+        {
+            MethodInfo original = typeof(CreatureModel).GetMethod(
+                "TakeDamage",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                new[] { typeof(UnitModel), typeof(DamageInfo) },
+                null);
+            MethodInfo patch = typeof(BossRuntime).GetMethod(
+                nameof(BossRuntime.BeforeCreatureDamage),
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (ReferenceEquals(original, null) || ReferenceEquals(patch, null))
+            {
+                Debug.LogError("[UnfinishedForm] 找不到 CreatureModel.TakeDamage 或 BossRuntime.BeforeCreatureDamage。");
+                return;
+            }
+
+            harmony.Patch(original, new HarmonyMethod(patch), null, null);
         }
 
         private static void Patch(HarmonyInstance harmony, System.Type type, string target, string patchMethod, bool prefix)

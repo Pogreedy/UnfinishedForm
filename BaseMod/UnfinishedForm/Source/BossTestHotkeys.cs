@@ -24,7 +24,7 @@ namespace UnfinishedForm.BaseMod
                 BossRuntime.ResetTest();
             }
 
-            BossRuntime.Tick();
+            BossRuntime.Tick(Time.deltaTime);
         }
     }
 }
