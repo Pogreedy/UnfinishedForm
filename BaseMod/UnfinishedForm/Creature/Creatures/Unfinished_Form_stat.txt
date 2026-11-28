@@ -1,6 +1,6 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <creature>
-  <script>DummyCreature</script>
+  <script>UnfinishedFormCreature</script>
   <stat>
     <riskLevel>4</riskLevel>
     <maxWorkCount>9</maxWorkCount>
