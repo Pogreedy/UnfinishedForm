@@ -37,7 +37,7 @@ namespace UnfinishedForm.BaseMod
         {
             MethodInfo original = type.GetMethod(target, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             MethodInfo patch = typeof(ContainmentRuntime).GetMethod(patchMethod, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-            if (original == null || patch == null)
+            if (ReferenceEquals(original, null) || ReferenceEquals(patch, null))
             {
                 Debug.LogError("[UnfinishedForm] Harmony target/patch not found: " + type.FullName + "." + target);
                 return;
