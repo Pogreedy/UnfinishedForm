@@ -47,6 +47,12 @@ namespace UnfinishedForm.BaseMod
             // 当前版本把“压迫”当作审判：审判无论结果如何都立即 -1。
             if (workType == RwbpType.P)
             {
+                // 压迫/审判工作完成即视为观察到 work_p，避免因单次 PE 较少而卡在观察等级 3。
+                if (model.observeInfo != null)
+                {
+                    model.observeInfo.OnObserveRegion("work_p");
+                }
+
                 model.SubQliphothCounter();
 
                 if (state == CreatureFeelingState.BAD)
