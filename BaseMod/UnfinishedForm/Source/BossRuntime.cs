@@ -213,27 +213,46 @@ namespace UnfinishedForm.BaseMod
 
         public static void ForcePhaseFour()
         {
-            if (_model == null)
-            {
-                return;
-            }
-
-            _model.hp = BossMaxHp * 0.2f;
-            _active = true;
-            SetPhase(BossPhase.PhaseFour);
-            Debug.Log("[UnfinishedForm] F7：已跳第 4 阶段。");
+            ForcePhase(BossPhase.PhaseFour);
+            Debug.Log("[UnfinishedForm] 已跳第 4 阶段。");
         }
 
-        public static void TestDamage()
+        public static void ForcePhase(BossPhase phase)
         {
             if (_model == null)
             {
                 return;
             }
 
-            _model.hp = Mathf.Max(0f, _model.hp - 300f);
+            _active = true;
+            _phase = phase;
+            _phaseTimer = 0f;
+
+            if (phase == BossPhase.PhaseFour)
+            {
+                _model.hp = BossMaxHp * 0.2f;
+                _shield = PhaseFourMaxShield;
+            }
+
+            SetPhase(phase);
+            Debug.Log("[UnfinishedForm] 已强制进入 Boss 阶段 " + (int)phase + "。");
+        }
+
+        public static void TestDamage(float amount)
+        {
+            if (_model == null)
+            {
+                return;
+            }
+
+            _model.hp = Mathf.Max(0f, _model.hp - amount);
             CheckPhaseByHp();
-            Debug.Log("[UnfinishedForm] F8：Boss HP=" + _model.hp);
+            Debug.Log("[UnfinishedForm] Boss 受到 " + amount + " 测试伤害，当前 HP=" + _model.hp);
+        }
+
+        public static void TestDamage()
+        {
+            TestDamage(300f);
         }
 
         public static void ResetTest()
