@@ -111,7 +111,24 @@ namespace UnfinishedForm.BaseMod
                 isOurs = true;
             }
 
-            __instance.workNames[3].SetTextForcely(isOurs ? "审判" : "压迫");
+            // 不依赖按钮下标：找到当前显示为“压迫/审判”的工作名并替换。
+            for (int i = 0; i < __instance.workNames.Length; i++)
+            {
+                if (__instance.workNames[i] == null || __instance.workNames[i].Text == null)
+                {
+                    continue;
+                }
+
+                string current = __instance.workNames[i].Text.text;
+                if (isOurs && (current == "压迫" || current == "审判"))
+                {
+                    __instance.workNames[i].SetTextForcely("审判");
+                }
+                else if (!isOurs && current == "审判")
+                {
+                    __instance.workNames[i].SetTextForcely("压迫");
+                }
+            }
         }
     }
 }

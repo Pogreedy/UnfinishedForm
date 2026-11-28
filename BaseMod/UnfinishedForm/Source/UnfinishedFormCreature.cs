@@ -11,6 +11,7 @@ namespace UnfinishedForm.BaseMod
     {
         public UnfinishedFormCreature()
         {
+            Harmony_Patch.Install();
         }
 
         public override bool ForcelySuccess(UseSkill skill)

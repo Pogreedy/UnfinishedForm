@@ -1,10 +1,12 @@
 using System.Reflection;
 using Harmony;
+using UnityEngine;
 
 namespace UnfinishedForm.BaseMod
 {
     /// <summary>
-    /// BaseMod 会扫描 DLL，并实例化名为 Harmony_Patch 的类型。
+    /// BaseMod 会扫描 DLL，并实例化名为 Harmony_Patch 的类型；
+    /// 同时由 UnfinishedFormCreature 主动调用 Install()，避免 BaseMod 没有实例化入口。
     /// </summary>
     public sealed class Harmony_Patch
     {
@@ -12,18 +14,23 @@ namespace UnfinishedForm.BaseMod
 
         public Harmony_Patch()
         {
+            Install();
+        }
+
+        public static void Install()
+        {
             if (_installed)
             {
                 return;
             }
 
-            UnityEngine.Debug.Log("[UnfinishedForm] Harmony_Patch 正在安装。");
+            Debug.Log("[UnfinishedForm] Harmony_Patch 正在安装。");
             HarmonyInstance harmony = HarmonyInstance.Create("UnfinishedForm.BaseMod");
             Patch(harmony, typeof(CreatureBase), "OnStageStart", nameof(ContainmentRuntime.OnStageStart), false);
             Patch(harmony, typeof(AgentModel), "Panic", nameof(ContainmentRuntime.SuppressPanic), true);
             Patch(harmony, typeof(CommandWindow.CommandWindow), "CreateWindow", nameof(ContainmentRuntime.OnCreateCommandWindow), false);
             _installed = true;
-            UnityEngine.Debug.Log("[UnfinishedForm] Harmony_Patch 安装完成。");
+            Debug.Log("[UnfinishedForm] Harmony_Patch 安装完成。");
         }
 
         private static void Patch(HarmonyInstance harmony, System.Type type, string target, string patchMethod, bool prefix)
@@ -32,7 +39,7 @@ namespace UnfinishedForm.BaseMod
             MethodInfo patch = typeof(ContainmentRuntime).GetMethod(patchMethod, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             if (original == null || patch == null)
             {
-                UnityEngine.Debug.LogError("[UnfinishedForm] Harmony target/patch not found: " + type.FullName + "." + target);
+                Debug.LogError("[UnfinishedForm] Harmony target/patch not found: " + type.FullName + "." + target);
                 return;
             }
 
