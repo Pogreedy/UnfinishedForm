@@ -21,9 +21,10 @@ LobotomyCorp_Data\BaseMods\UnfinishedForm
 
 ## 占位表现
 
-- 模型/动画：原版 `Unit/CreatureAnimator/DummyCreature`
-- 立绘：原版 `CreatureSprite/Dummy`
-- 不使用、也不复制「永恒之花」的美术资源。
+- 脚本：原版 `DummyCreature`（当前只验证注册与四类工作）
+- 模型/动画：本地占位 `CreatureAnimation/Unfinished_FormAnim`
+- 立绘：本地占位 `Creature/Portrait/Unfinished_Form.png`
+- 上述占位素材来自「永恒之花」，只放在本机 BaseMods 中，**不提交到 Git**；公开仓库里的包需要本地补齐这些文件才能显示。
 
 ## 构建
 

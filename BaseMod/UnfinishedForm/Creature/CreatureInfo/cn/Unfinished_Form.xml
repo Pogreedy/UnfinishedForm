@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <creature>
   <info id="29901">
     <narration action="move">
@@ -9,7 +9,7 @@
   <observe level="1">
     <collection>
       <codeNo openLevel="0">O-00-001</codeNo>
-      <portrait openLevel="1">CreatureSprite/Dummy</portrait>
+      <portrait openLevel="1">Custom/Unfinished_Form</portrait>
       <name openLevel="1">未竟之形</name>
       <riskLevel openLevel="1">ALEPH</riskLevel>
       <openText>占位异想体。当前只验证收容与四类工作。</openText>

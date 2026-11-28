@@ -1,6 +1,6 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <creature>
-  <script>UnfinishedFormCreature</script>
+  <script>DummyCreature</script>
   <stat>
     <riskLevel>4</riskLevel>
     <maxWorkCount>9</maxWorkCount>
@@ -71,6 +71,6 @@
     <edge node1="workspace" node2="inner" type="road" />
     <edge node1="creature" node2="workspace" type="road" />
   </graph>
-  <anim prefab="Unit/CreatureAnimator/DummyCreature" x="-1" y="-2" />
-  <portrait src="CreatureSprite/Dummy" />
+  <anim prefab="Custom/Unfinished_FormAnim" x="-1" y="-2" />
+  <portrait src="Unit/creature/magicalGirl" />
 </creature>
