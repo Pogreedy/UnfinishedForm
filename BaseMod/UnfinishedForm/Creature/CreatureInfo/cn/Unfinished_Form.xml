@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <creature>
   <info id="29902">
     <narration action="move">
@@ -40,5 +40,11 @@
       出逃期间，它不会被普通的镇压手段彻底消灭；只有完成它的“未竟之事”才能终止出逃。
       ]
     </desc>
+
+    <specialTipSize size="3">
+      <specialTip openLevel="0" key="0">工作结果不为“差”时，可以正常获得 PE-BOX。</specialTip>
+      <specialTip openLevel="1" key="1">完成工作后，逆卡巴拉计数器有概率减少。</specialTip>
+      <specialTip openLevel="2" key="2">压迫结果为“差”时，逆卡巴拉计数器立即减少。</specialTip>
+    </specialTipSize>
   </observe>
 </creature>
