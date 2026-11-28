@@ -12,7 +12,7 @@
     <require type="P">5</require>
 
     <weaponClassType>special</weaponClassType>
-    <specialWeaponAnim>NothingWeapon</specialWeaponAnim>
+    <specialWeaponAnim>UnfinishedFormWeapon</specialWeaponAnim>
     <sprite>UnfinishedForm_weapon</sprite>
 
     <animation>Attack_01</animation>
