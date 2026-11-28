@@ -31,6 +31,7 @@ namespace UnfinishedForm.BaseMod
             Patch(harmony, typeof(CommandWindow.CommandWindow), "CreateWindow", nameof(ContainmentRuntime.OnCreateCommandWindow), false);
             Patch(harmony, typeof(CommandWindow.CommandWindow), "OnEnable", nameof(ContainmentRuntime.OnCommandWindowEnable), false);
             Patch(harmony, typeof(CommandWindow.WorkAllocateRegion), "SetData", nameof(ContainmentRuntime.OnWorkAllocateSetData), false);
+            Patch(harmony, typeof(GameManager), "Update", nameof(BossTestHotkeys.OnGameManagerUpdate), false);
             _installed = true;
             Debug.Log("[UnfinishedForm] Harmony_Patch 安装完成。");
         }

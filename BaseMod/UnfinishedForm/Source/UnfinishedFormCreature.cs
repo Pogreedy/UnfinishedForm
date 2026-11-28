@@ -24,6 +24,18 @@ namespace UnfinishedForm.BaseMod
             return false;
         }
 
+        public override void OnStageStart()
+        {
+            base.OnStageStart();
+            BossRuntime.Bind(this);
+        }
+
+        public override void Escape()
+        {
+            base.Escape();
+            BossRuntime.Begin();
+        }
+
         public override void OnFinishWork(UseSkill skill)
         {
             base.OnFinishWork(skill);
