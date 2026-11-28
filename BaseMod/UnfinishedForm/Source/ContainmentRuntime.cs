@@ -146,6 +146,28 @@ namespace UnfinishedForm.BaseMod
                     window.workNames[i].SetTextForcely("压迫");
                 }
             }
+
+            // 有些版本按钮文本不是 workNames，直接扫一次命令窗口内的 Text。
+            if (window.RootControl != null)
+            {
+                UnityEngine.UI.Text[] texts = window.RootControl.GetComponentsInChildren<UnityEngine.UI.Text>(true);
+                for (int i = 0; i < texts.Length; i++)
+                {
+                    if (texts[i] == null)
+                    {
+                        continue;
+                    }
+
+                    if (isOurs && texts[i].text == "压迫")
+                    {
+                        texts[i].text = "审判";
+                    }
+                    else if (!isOurs && texts[i].text == "审判")
+                    {
+                        texts[i].text = "压迫";
+                    }
+                }
+            }
         }
     }
 }
