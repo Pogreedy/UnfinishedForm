@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <creature>
   <info id="29901">
     <narration action="move">
-      #0 has been assigned to containment unit "0".
+      #0被分配到“0”的收容单元中。
     </narration>
   </info>
 
@@ -10,14 +10,34 @@
     <collection>
       <codeNo openLevel="0">O-00-001</codeNo>
       <portrait openLevel="1">Custom/Unfinished_Form</portrait>
-      <name openLevel="1">Unfinished Form</name>
+      <name openLevel="1">未竟之形</name>
       <riskLevel openLevel="1">ALEPH</riskLevel>
-      <openText>Placeholder abnormality. Containment and four work types only.</openText>
+      <openText>尚未完成、仍在等待被完成的异想体。</openText>
     </collection>
 
     <desc id="1" openLevel="1">
       [
-      {An unfinished form.}
+      “未竟之形”不会主动攻击，但它始终在等待一场没有结束的工作。
+      ]
+    </desc>
+    <desc id="2" openLevel="1">
+      [
+      完成任意工作后，收容单元的逆卡巴拉计数器有一定概率减少。
+      ]
+    </desc>
+    <desc id="3" openLevel="2">
+      [
+      压迫工作的结果若为“差”，逆卡巴拉计数器将立即减少。
+      ]
+    </desc>
+    <desc id="4" openLevel="3">
+      [
+      计数器归零后，“未竟之形”会离开收容单元，开始寻找未完成的工作。
+      ]
+    </desc>
+    <desc id="5" openLevel="3">
+      [
+      出逃期间，它不会被普通的镇压手段彻底消灭；只有完成它的“未竟之事”才能终止出逃。
       ]
     </desc>
   </observe>
