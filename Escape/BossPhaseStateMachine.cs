@@ -14,6 +14,9 @@ namespace UnfinishedForm.Escape
         /// <summary>进入第二阶段的生命值比例。</summary>
         public const float PhaseTwoHpRatio = 0.5f;
 
+        /// <summary>第三阶段生命值低于该比例时进入第四阶段。</summary>
+        public const float PhaseFourHpRatio = 0.3f;
+
         /// <summary>当前 Boss 阶段。</summary>
         public BossPhase CurrentPhase { get; private set; } = BossPhase.None;
 
@@ -48,12 +51,26 @@ namespace UnfinishedForm.Escape
             }
         }
 
-        /// <summary>茧的生命值归零后进入第三阶段。第三阶段技能暂未实现。</summary>
+        /// <summary>茧的生命值归零后进入第三阶段。</summary>
         public void NotifyCocoonBroken()
         {
             if (CurrentPhase == BossPhase.PhaseTwo)
             {
                 EnterPhase(BossPhase.PhaseThree);
+            }
+        }
+
+        /// <summary>第三阶段本体生命值低于 30% 时进入第四阶段。</summary>
+        public void NotifyPhaseFourThreshold(float currentHp, float maxHp)
+        {
+            if (CurrentPhase != BossPhase.PhaseThree || maxHp <= 0f || currentHp <= 0f)
+            {
+                return;
+            }
+
+            if (currentHp / maxHp < PhaseFourHpRatio)
+            {
+                EnterPhase(BossPhase.PhaseFour_Backlash);
             }
         }
 

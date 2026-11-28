@@ -52,7 +52,8 @@ namespace UnfinishedForm.Escape
 
         public float LightShadowReflectionRemainingSeconds => _lightShadowReflectionTimer;
 
-        public bool IsDefeated => IsPhaseThree && BodyHp <= 0f;
+        public bool IsDefeated => IsSuppressed
+            || ((IsPhaseThree || IsPhaseFour) && BodyHp <= 0f);
 
         public int AlivePhantomCount
         {
@@ -352,6 +353,7 @@ namespace UnfinishedForm.Escape
         private void EnterPhaseThree()
         {
             ResetPhaseThreeState();
+            ResetPhaseFourState();
             PhaseThreeStarted?.Invoke();
         }
 
@@ -529,12 +531,25 @@ namespace UnfinishedForm.Escape
 
             BodyHp = Math.Max(0f, BodyHp - effectiveDamage);
             LastBodyDamage = effectiveDamage;
+
+            if (BodyHp <= 0f)
+            {
+                MarkSuppressed();
+                return effectiveDamage;
+            }
+
+            Phase.NotifyPhaseFourThreshold(BodyHp, BodyMaxHp);
             CheckNotMeThresholds();
             return effectiveDamage;
         }
 
         private void CheckNotMeThresholds()
         {
+            if (!IsPhaseThree)
+            {
+                return;
+            }
+
             float ratio = BodyHp / BodyMaxHp;
 
             if (ratio <= 0.75f && !_notMeTriggered[0])

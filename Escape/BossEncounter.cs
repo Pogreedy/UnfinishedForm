@@ -282,6 +282,12 @@ namespace UnfinishedForm.Escape
             if (IsPhaseThree)
             {
                 TickPhaseThree(deltaTime);
+                return;
+            }
+
+            if (IsPhaseFour)
+            {
+                TickPhaseFour(deltaTime);
             }
         }
 
@@ -371,6 +377,11 @@ namespace UnfinishedForm.Escape
             if (IsPhaseThree)
             {
                 return ApplyPhaseThreeDamage(damageType, amount);
+            }
+
+            if (IsPhaseFour)
+            {
+                return ApplyPhaseFourDamage(damageType, amount);
             }
 
             return 0f;
@@ -540,6 +551,7 @@ namespace UnfinishedForm.Escape
             _cocoonDesireTimer = 0f;
             _cocoonHealTimer = 0f;
             ResetPhaseThreeState();
+            ResetPhaseFourState();
             ResetLastDamageFields();
         }
 
@@ -561,6 +573,10 @@ namespace UnfinishedForm.Escape
                 _cocoonDesireTimer = 0f;
                 _cocoonHealTimer = 0f;
                 EnterPhaseThree();
+            }
+            else if (currentPhase == BossPhase.PhaseFour_Backlash)
+            {
+                EnterPhaseFour();
             }
         }
 

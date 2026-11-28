@@ -10,7 +10,10 @@ namespace UnfinishedForm.Escape
         PhaseTwo = 2,
         PhaseThree = 3,
 
+        /// <summary>第四阶段：光影反噬。</summary>
+        PhaseFour_Backlash = 4,
+
         /// <summary>狂暴或最终阶段。</summary>
-        Enrage = 4,
+        Enrage = 5,
     }
 }
